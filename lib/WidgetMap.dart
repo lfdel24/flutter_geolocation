@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_geolocation/geolocator_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlng/latlng.dart';
 import 'package:map/map.dart';
 
@@ -11,15 +13,16 @@ class _WidgetMapState extends State<WidgetMap> {
   @override
   void initState() {
     super.initState();
-    _gotoDefault;
+
+    setState(() {
+      getPosition().then((value) => _gotoDefault(value));
+    });
   }
 
-  final controller = MapController(
-    location: LatLng(35.68, 51.41),
-  );
+  final controller = MapController(location: LatLng(4.5536312, -75.6324356));
 
-  void _gotoDefault() {
-    controller.center = LatLng(4.5536312, -75.6324356);
+  void _gotoDefault(Position p) {
+    controller.center = LatLng(p.latitude, p.longitude);
   }
 
   void _onDoubleTap() {
@@ -56,7 +59,7 @@ class _WidgetMapState extends State<WidgetMap> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Map Demo'),
+        title: Text('Map Demo | lfdel24@gmail.com'),
       ),
       body: GestureDetector(
         onDoubleTap: _onDoubleTap,
@@ -87,7 +90,9 @@ class _WidgetMapState extends State<WidgetMap> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _gotoDefault,
+        onPressed: () {
+          getPosition().then((value) => _gotoDefault(value));
+        },
         tooltip: 'My Location',
         child: Icon(Icons.my_location),
       ),
